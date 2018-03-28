@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html lang="nl" ng-app="yahtzeeToolApp" ng-controller="indexController">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Description">
+    <meta name="author" content="I. Isaku">
+
+    <base href="/">
+    
+    <link rel="icon" href="/assets/dice.png">
+    <link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/bower_components/open-iconic/font/css/open-iconic-bootstrap.min.css" >
+    <link rel="stylesheet" type="text/css" href="/main.css">       
+
+    <title>Yahtzee Tool</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/" title="Yahtzee Tool">
+            <img src="/assets/dice.png" width="30" height="30" class="d-inline-block align-top" alt="dice">
+            Yahtzee Tool
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavigation" aria-controls="navbarNavigation" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNavigation">
+            <ul class="navbar-nav">
+                <li class="nav-item" ng-class="{active: location.url === '/spelers'}">
+                    <a class="nav-link" href="/spelers" title="Spelers">Spelers</a>
+                </li>
+                <li class="nav-item" ng-class="{active: location.url === '/toernooien'}">
+                    <a class="nav-link" href="/toernooien" title="Toernooien">Toernooien</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container" ng-view></main>
+
+    <footer class="container-fluid bg-light text-center py-2">Yahtzee Tool v.1.0</footer>
+    
+    <script src="/bower_components/jquery/dist/jquery.slim.min.js"></script>
+    <script src="/bower_components/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/bower_components/angular/angular.min.js"></script>
+    <script src="/bower_components/angular-route/angular-route.min.js"></script>
+    <script src="/dependencies/xregexp-all.js"></script>
+
+    <script src="/app/app.module.js"></script>
+    <script src="/app/app.routes.js"></script>
+    <script src="/app/index.controller.js"></script>
+    <script src="/app/spelers/spelers.controller.js"></script>   
+    <script src="/app/toernooien/toernooien.controller.js"></script>
+    <script src="/app/speel/speel.controller.js"></script>
+    <script src="/app/shared/spelers.service.js"></script>
+    <script src="/app/shared/toernooien.service.js"></script>
+    <script src="/app/shared/spellen.service.js"></script>
+    <script src="/app/shared/scorelijsten.service.js"></script>
+    <script src="/app/shared/enumerate.filter.js"></script>
+    <script src="/app/shared/scorelijst.js"></script>
+</body>
+</html>

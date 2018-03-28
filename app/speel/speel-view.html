@@ -1,0 +1,200 @@
+<div class="row">
+    <div class="col">
+        <h1 ng-if="toernooi.spellen.length === 1 && toernooi.spelers.length === 1" class="my-3">Scorelijst: {{toernooi.naam}}</h1>
+        <h1 ng-if="toernooi.spellen.length > 1 || (toernooi.spellen.length === 1 && toernooi.spelers.length > 1)" class="my-3">Scorelijsten: {{toernooi.naam}}</h1>
+    </div>
+    <div class="col-2 my-auto">
+        <div id="spelronde-selection">
+            <label for="spelronde-select">Spelronde:</label>
+            <select id="spelronde-select" class="custom-select" ng-model="selectedSpel" ng-options="spel.ronde for spel in toernooi.spellen track by spel.id"></select>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table class="table table-bordered table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Categorieën</th>
+                    <th scope="col">Puntentelling</th>
+                    <th scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">{{scorelijst.speler.naam}}</th>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <th scope="col" colspan="{{2 + selectedSpel.scorelijsten.length}}" class="text-center">Deel 1</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Enen</th>
+                    <th scope="row">Tel alle enen</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.enen" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Tweeën</th>
+                    <th scope="row">Tel alle tweeën</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.tweeen" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Drieën</th>
+                    <th scope="row">Tel alle drieën</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.drieen" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Vieren</th>
+                    <th scope="row">Tel alle vieren</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.vieren" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Vijven</th>
+                    <th scope="row">Tel alle vijven</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.vijven" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Zessen</th>
+                    <th scope="row">Tel alle zessen</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.zessen" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" colspan="2">Totaal aantal punten</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        {{scorelijst.getTotaalAantalPunten()}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <span>Extra bonus</span><br>
+                        <span><small>als puntentotaal 63 of meer is</small></span>
+                    </th>
+                    <th scope="row">35 punten</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        {{scorelijst.getExtraBonus()}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" colspan="2">
+                        <span>Totaal</span><br>
+                        <span><small>van de bovenste helft</small></span>
+                    </th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        {{scorelijst.getTotaalBoven()}}
+                    </td>
+                </tr>
+            </tbody>
+            <thead>
+                <tr>
+                    <th scope="col" colspan="{{2 + selectedSpel.scorelijsten.length}}" class="text-center">Deel 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        <span>Three of a kind</span><br>
+                        <span><small>3 dezelfde</small></span>
+                    </th>
+                    <th scope="row">Totaal van de 5 stenen</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.threeOfAKind" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <span>Carré</span><br>
+                        <span><small>4 dezelfde</small></span>
+                    </th>
+                    <th scope="row">Totaal van de 5 stenen</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.carre" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <span>Full house</span><br>
+                        <span><small>3 + 2 dezelfde</small></span>
+                    </th>
+                    <th scope="row">25 punten</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.fullHouse" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <span>Kleine straat</span><br>
+                        <span><small>4 opeenvolgende nummers</small></span>
+                    </th>
+                    <th scope="row">30 punten</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.kleineStraat" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <span>Grote straat</span><br>
+                        <span><small>5 opeenvolgende nummers</small></span>
+                    </th>
+                    <th scope="row">40 punten</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.groteStraat" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <span>Yahtzee</span><br>
+                        <span><small>5 dezelfde</small></span>
+                    </th>
+                    <th scope="row">50 punten</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.yahtzee" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <span>Chance</span><br>
+                        <span><small>vrije keus</small></span>
+                    </th>
+                    <th scope="row">Totaal van de 5 stenen</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        <input type="number" min="0" step="1" class="form-control" ng-model="scorelijst.chance" ng-change="updateScorelijst(scorelijst)">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" colspan="2">
+                        <span>Totaal</span><br>
+                        <span><small>van de onderste helft</small></span>
+                    </th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        {{scorelijst.getTotaalOnder()}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" colspan="2">
+                        <span>Totaal</span><br>
+                        <span><small>van de bovenste helft</small></span>
+                    </th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        {{scorelijst.getTotaalBoven()}}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" colspan="2">Totaal generaal</th>
+                    <td scope="col" ng-repeat="scorelijst in selectedSpel.scorelijsten track by scorelijst.id">
+                        {{scorelijst.getTotaalGeneraal()}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

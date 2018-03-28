@@ -1,0 +1,122 @@
+<div class="row">
+    <div class="col">
+        <h1 class="my-3">Toernooien</h1>
+    </div>
+    <div class="col my-auto">
+        <button id="add-button" type="button" class="btn btn-success float-right" title="Toevoegen" ng-click="creating = true" ng-hide="creating">
+                <span class="oi oi-plus" aria-hidden="true"></span>
+                <span class="sr-only">Toevoegen</span>
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Naam</th>
+                    <th scope="col">Rondes</th>
+                    <th scope="col">Spelers</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-form="updateToernooiForm" ng-repeat="toernooi in toernooien track by toernooi.id">
+                    <td class="align-middle form-group">
+                        <span ng-hide="updating">{{toernooi.naam}}</span>
+                        <input ng-show="updating" type="text" id="update-input-naam-{{toernooi.id}}" class="form-control" name="naam" ng-class="{'is-invalid': updateToernooiForm.naam.$invalid && (updateToernooiForm.naam.$touched || updateToernooiForm.$submitted)}" ng-model="updateToernooi.naam" required ng-minlength="2" ng-pattern="naamRegExp">
+                        <span class="invalid-feedback" ng-show="(updateToernooiForm.naam.$touched || updateToernooiForm.$submitted) && updateToernooiForm.naam.$error.required">De toernooinaam moet ingevuld worden.</span>
+                        <span class="invalid-feedback" ng-show="(updateToernooiForm.naam.$touched || updateToernooiForm.$submitted) && !updateToernooiForm.naam.$error.required && updateToernooiForm.naam.$error.minlength">De toernooinaam moet minimaal 2 karakters bevatten.</span>
+                        <span class="invalid-feedback" ng-show="(updateToernooiForm.naam.$touched || updateToernooiForm.$submitted) && !updateToernooiForm.naam.$error.required && !updateToernooiForm.naam.$error.minlength && updateToernooiForm.naam.$error.pattern">De toernooinaam mag alleen letters, spaties, punten, uitroeptekens, apostoffen en streepjes bevatten.</span>
+                    </td>
+                    <td class="align-middle form-group">
+                        <span ng-hide="updating">{{toernooi.spellen.length}}</span>
+                        <input ng-show="updating" type="number" min="1" step="1" id="update-input-rondes-{{toernooi.id}}" class="form-control" name="rondes" ng-class="{'is-invalid': updateToernooiForm.rondes.$invalid && (updateToernooiForm.rondes.$touched || updateToernooiForm.$submitted)}" ng-model="updateToernooi.rondes" required>
+                        <span class="invalid-feedback" ng-show="(updateToernooiForm.rondes.$touched || updateToernooiForm.$submitted) && updateToernooiForm.rondes.$error.required">Het aantal te spelen rondes moet ingevuld worden.</span>
+                        <span class="invalid-feedback" ng-show="(updateToernooiForm.rondes.$touched || updateToernooiForm.$submitted) && !updateToernooiForm.rondes.$error.required && updateToernooiForm.rondes.$error.min">Het aantal te spelen rondes moet minimaal 1 of hoger zijn.</span>
+                    </td>
+                    <td class="align-middle form-group">
+                        <span ng-hide="updating">{{toernooi.spelers | enumerate: 'naam'}}</span>
+                        <div ng-show="updating">
+                            <div id="update-input-spelers" class="form-check" ng-init="updateToernooiFormSpelers = getUpdateToernooiFormSpelers(toernooi.spelers); updateToernooiFormSpelersValidation = {InputRequired: false, InputTouched: false}; setUpdateInputTouchedWatches(updateToernooiForm, updateToernooiFormSpelers, updateToernooiFormSpelersValidation);">
+                                <div ng-repeat="speler in updateToernooiFormSpelers track by speler.id">
+                                    <input type="checkbox" id="update-input-spelers-{{speler.id}}" class="form-check-input" ng-class="{'is-invalid': updateToernooiFormSpelersValidation.InputRequired && (updateToernooiFormSpelersValidation.InputTouched || updateToernooiForm.$submitted)}" name="speler{{speler.id}}" ng-model="updateToernooiFormSpelers[$index].selected" ng-change="setUpdateInputRequired(updateToernooiFormSpelersValidation, updateToernooiFormSpelers)" ng-required="updateToernooiFormSpelersValidation.InputRequired">
+                                    <label for="update-input-spelers-{{speler.id}}" class="form-check-label">{{speler.naam}}</label>
+                                </div>
+                            </div>
+                            <span class="custom-invalid-feedback" ng-show="updateToernooiFormSpelersValidation.InputRequired && (updateToernooiFormSpelersValidation.InputTouched || updateToernooiForm.$submitted)">Er moet minimaal 1 speler deelnemen aan het toernooi.</span>
+                        </div>
+                    </td>
+                    <td class="align-middle text-right">
+                        <button type="button" class="btn btn-success" title="Speel" ng-click="navigateSpeelView(toernooi.id)" ng-hide="updating">
+                            <span class="oi oi-media-play" aria-hidden="true"></span>
+                            <span class="sr-only">Speel</span>
+                        </button>
+                        <button type="button" class="btn btn-warning" title="Wijzigen" ng-click="updating = true; updateToernooi = {id: toernooi.id, naam: toernooi.naam, rondes: toernooi.spellen.length, spellen: toernooi.spellen, spelers: toernooi.spelers};" ng-hide="updating">
+                            <span class="oi oi-pencil" aria-hidden="true"></span>
+                            <span class="sr-only">Wijzigen</span>
+                        </button>
+                        <button type="button" class="btn btn-danger" title="Verwijderen" ng-click="delete(toernooi)" ng-hide="updating">
+                            <span class="oi oi-trash" aria-hidden="true"></span>
+                            <span class="sr-only">Verwijderen</span>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Opslaan" ng-click="updateToernooiForm.$setSubmitted(); updating = !update(updateToernooiForm, updateToernooiFormSpelersValidation, updateToernooiFormSpelers, updateToernooi);" ng-show="updating">
+                            <span class="oi oi-check" aria-hidden="true"></span>
+                            <span class="sr-only">Opslaan</span>
+                        </button>
+                        <button type="button" class="btn btn-warning" title="Herstellen" ng-click="updateToernooi = {id: toernooi.id, naam: toernooi.naam, rondes: toernooi.spellen.length, spellen: toernooi.spellen, spelers: toernooi.spelers}; updateToernooiFormSpelers = getUpdateToernooiFormSpelers(toernooi.spelers); resetUpdateToernooiForm(updateToernooiForm, updateToernooiFormSpelersValidation);" ng-show="updating">
+                            <span class="oi oi-reload" aria-hidden="true"></span>
+                            <span class="sr-only">Herstellen</span>
+                        </button>
+                        <button type="button" class="btn btn-danger" title="Sluiten" ng-click="updating = false; updateToernooi = {id: toernooi.id, naam: toernooi.naam, rondes: toernooi.spellen.length, spellen: toernooi.spellen, spelers: toernooi.spelers}; updateToernooiFormSpelers = getUpdateToernooiFormSpelers(toernooi.spelers); resetUpdateToernooiForm(updateToernooiForm, updateToernooiFormSpelersValidation);" ng-show="updating">
+                            <span class="oi oi-x" aria-hidden="true"></span>
+                            <span class="sr-only">Sluiten</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4" ng-show="creating">
+        <h3>Nieuw toernooi:</h3>
+        <form class="mb-3" name="createToernooiForm" ng-submit="create()" novalidate>
+            <div class="form-group">
+                <label for="create-input-naam">Naam:</label>
+                <input type="text" id="create-input-naam" class="form-control" name="naam" ng-class="{'is-invalid': createToernooiForm.naam.$invalid && (createToernooiForm.naam.$touched || createToernooiForm.$submitted)}" ng-model="newToernooi.naam" required ng-minlength="2" ng-pattern="naamRegExp">
+                <span class="invalid-feedback" ng-show="(createToernooiForm.naam.$touched || createToernooiForm.$submitted) && createToernooiForm.naam.$error.required">De toernooinaam moet ingevuld worden.</span>
+                <span class="invalid-feedback" ng-show="(createToernooiForm.naam.$touched || createToernooiForm.$submitted) && !createToernooiForm.naam.$error.required && createToernooiForm.naam.$error.minlength">De toernooinaam moet minimaal 2 karakters bevatten.</span>
+                <span class="invalid-feedback" ng-show="(createToernooiForm.naam.$touched || createToernooiForm.$submitted) && !createToernooiForm.naam.$error.required && !createToernooiForm.naam.$error.minlength && createToernooiForm.naam.$error.pattern">De toernooinaam mag alleen letters, spaties, punten, uitroeptekens, apostoffen en streepjes bevatten.</span>
+            </div>
+            <div class="form-group">
+                <label for="create-input-rondes">Aantal te spelen rondes:</label>
+                <input type="number" min="1" step="1" id="create-input-rondes" class="form-control" name="rondes" ng-class="{'is-invalid': createToernooiForm.rondes.$invalid && (createToernooiForm.rondes.$touched || createToernooiForm.$submitted)}" ng-model="newToernooi.rondes" required>
+                <span class="invalid-feedback" ng-show="(createToernooiForm.rondes.$touched || createToernooiForm.$submitted) && createToernooiForm.rondes.$error.required">Het aantal te spelen rondes moet ingevuld worden.</span>
+                <span class="invalid-feedback" ng-show="(createToernooiForm.rondes.$touched || createToernooiForm.$submitted) && !createToernooiForm.rondes.$error.required && createToernooiForm.rondes.$error.min">Het aantal te spelen rondes moet minimaal 1 of hoger zijn.</span>
+            </div>
+            <div class="form-group">
+                <label for="create-input-spelers">Deelnemende spelers:</label>
+                <div id="create-input-spelers" class="form-check">
+                    <div ng-repeat="speler in createToernooiFormSpelers track by speler.id">
+                        <input type="checkbox" id="create-input-spelers-{{speler.id}}" class="form-check-input" ng-class="{'is-invalid': createToernooiFormSpelersInputRequired && (createToernooiFormSpelersInputTouched || createToernooiForm.$submitted)}" name="speler{{speler.id}}" ng-model="createToernooiFormSpelers[$index].selected" ng-change="setCreateToernooiFormSpelersInputRequired();" ng-required="createToernooiFormSpelersInputRequired">
+                        <label for="create-input-spelers-{{speler.id}}" class="form-check-label">{{speler.naam}}</label>
+                    </div>
+                </div>
+                <span class="custom-invalid-feedback" ng-show="createToernooiFormSpelersInputRequired && (createToernooiFormSpelersInputTouched || createToernooiForm.$submitted)">Er moet minimaal 1 speler deelnemen aan het toernooi.</span>
+            </div>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary" title="Opslaan">
+                    <span class="oi oi-check" aria-hidden="true"></span>
+                    <span class="sr-only">Opslaan</span>
+                </button>
+                <button type="button" class="btn btn-warning" title="Herstellen" ng-click="resetCreateToernooiForm()">
+                    <span class="oi oi-reload" aria-hidden="true"></span>
+                    <span class="sr-only">Herstellen</span>
+                </button>
+                <button type="button" class="btn btn-danger" title="Sluiten" ng-click="closeCreateToernooiForm()">
+                    <span class="oi oi-x" aria-hidden="true"></span>
+                    <span class="sr-only">Sluiten</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
